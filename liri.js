@@ -1,8 +1,18 @@
 require("dotenv").config();
 var keys = require("./keys.js");
+var Spotify = require('node-spotify-api');
 var spotify = new Spotify(keys.spotify);
+var axios = require("axios");
+var moment = require("moment")
 
-
+var searchterm = process.argv[3];
+var searching = process.argv[2];
+if(searching==="concert-this"){
+    console.log("Got this far");
+    concertthis(searchterm);
+}else if(searching==="spotify-this-song"){
+    spotifythis(searchterm);
+}
 //concert-this
 //spotify-this-song
 //movie-this
@@ -15,50 +25,45 @@ var spotify = new Spotify(keys.spotify);
 
 //node liri.js concert-this <artist/band name here>
 
-
-
-
-//This will search the Bands in Town Artist Events API ("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp") for an artist and render the following information about each event to the terminal:
-
-
-//Name of the venue
-//Venue location
-//Date of the Event (use moment to format this as "MM/DD/YYYY")
-
-
-
-//Important: There is no need to sign up for a Bands in Town api_id key. Use the codingbootcamp as your app_id. For example, the URL used to search for "Celine Dion" would look like the following:
-//https://rest.bandsintown.com/artists/celine+dion/events?app_id=codingbootcamp
-
-
-
+function concertthis(name){
+    var queryURL = "https://rest.bandsintown.com/artists/" + name + "/events?app_id=codingbootcamp"
+    axios.get(queryURL).then(
+        function(response){
+            for(i=0; i<response.data.length;i++){
+                //console.log(response.data[i]);
+                console.log(response.data[i].venue.name);
+                console.log(response.data[i].venue.city + ", " + response.data[i].venue.country);
+                var datetime = response.data[i].datetime;
+                console.log(moment(datetime));
+            }
+        }
+    )
+}
 
 
 
 
 //node liri.js spotify-this-song '<song name here>'
-
+function spotifythis(name){
+    spotify.search({type:"track",query:name,limit:20},function(err, data) {
+        if (err) {
+          return console.log('Error occurred: ' + err);
+        }
+       
+      console.log(data); 
+      });
+}
 
 
 
 //This will show the following information about the song in your terminal/bash window
 
-
-//Artist(s)
-//The song's name
-//A preview link of the song from Spotify
-//The album that the song is from
-
-
-//If no song is provided then your program will default to "The Sign" by Ace of Base.
-//You will utilize the node-spotify-api package in order to retrieve song information from the Spotify API.
-//The Spotify API requires you sign up as a developer to generate the necessary credentials. You can follow these steps in order to generate a client id and client secret:
-//Step One: Visit https://developer.spotify.com/my-applications/#!/
-//Step Two: Either login to your existing Spotify account or create a new one (a free account is fine) and log in.
-//Step Three: Once logged in, navigate to https://developer.spotify.com/my-applications/#!/applications/create to register a new application to be used with the Spotify API. You can fill in whatever you'd like for these fields. When finished, click the "complete" button.
-//Step Four: On the next screen, scroll down to where you see your client id and client secret. Copy these values down somewhere, you'll need them to use the Spotify API and the node-spotify-api package.
-
-
+//if no song provided, info runs for the sign by ace of base
+//spotify api call with song name
+//console.log artist(s)
+//console.log song name
+//console.log spotify preview link
+//console.log album name
 
 //node liri.js movie-this '<movie name here>'
 
