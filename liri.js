@@ -3,7 +3,8 @@ var keys = require("./keys.js");
 var Spotify = require('node-spotify-api');
 var spotify = new Spotify(keys.spotify);
 var axios = require("axios");
-var moment = require("moment")
+var moment = require("moment");
+var fs = require("fs");
 
 var searchterm = process.argv.slice(3).join("+");
 var searching = process.argv[2];
@@ -13,6 +14,8 @@ if(searching==="concert-this"){
     spotifythis(searchterm);
 }else if(searching==="movie-this"){
     moviethis(searchterm);
+}else if(searching==="do-what-it-says"){
+    dothis();
 }
 //concert-this
 //spotify-this-song
@@ -47,7 +50,7 @@ function spotifythis(name){
     }
     spotify.search({type:"track",query:name,limit:20},function(err, data) {
         if (err) {
-          return console.log('Error occurred: ' + err);
+          return console.log("Information Not Available");
         }
         for(i=0;i<data.tracks.items.length;i++){
             for(x=0;x<data.tracks.items[i].artists.length;x++){console.log(data.tracks.items[0].artists[x].name);}
@@ -83,11 +86,24 @@ function moviethis(name){
 
 //node liri.js do-what-it-says
 
-
-
-
-//Using the fs Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
-
-
-//It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
-//Edit the text in random.txt to test out the feature for movie-this and concert-this.
+function dothis(){
+    fs.readFile('random.txt', 'utf8', function(err, contents) {
+        if (err) {
+            return console.log("Information Not Available");
+        }
+        var content = contents.split(",");
+        console.log(content);
+        var searching = content[0];
+        var searchterm = content[1];
+        if(searching==="concert-this"){
+            concertthis(searchterm);
+        }else if(searching==="spotify-this-song"){
+            spotifythis(searchterm);
+        }else if(searching==="movie-this"){
+            moviethis(searchterm);
+        }else if(searching==="do-what-it-says"){
+            dothis();
+        }
+    });
+     
+}
