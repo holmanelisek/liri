@@ -5,22 +5,19 @@ var spotify = new Spotify(keys.spotify);
 var axios = require("axios");
 var moment = require("moment")
 
-var searchterm = process.argv[3];
+var searchterm = process.argv.slice(3).join("+");
 var searching = process.argv[2];
 if(searching==="concert-this"){
-    console.log("Got this far");
     concertthis(searchterm);
 }else if(searching==="spotify-this-song"){
     spotifythis(searchterm);
+}else if(searching==="movie-this"){
+    moviethis(searchterm);
 }
 //concert-this
 //spotify-this-song
 //movie-this
 //do-what-it-says
-
-
-
-//What Each Command Should Do
 
 
 //node liri.js concert-this <artist/band name here>
@@ -45,52 +42,42 @@ function concertthis(name){
 
 //node liri.js spotify-this-song '<song name here>'
 function spotifythis(name){
+    if(!name){
+        name = "ace+of+base"
+    }
     spotify.search({type:"track",query:name,limit:20},function(err, data) {
         if (err) {
           return console.log('Error occurred: ' + err);
         }
-       
-      console.log(data); 
-      });
+        for(i=0;i<data.tracks.items.length;i++){
+            for(x=0;x<data.tracks.items[i].artists.length;x++){console.log(data.tracks.items[0].artists[x].name);}
+            console.log(data.tracks.items[i].name);
+            console.log(data.tracks.items[i].preview_url);
+            console.log(data.tracks.items[i].album.name);
+    }}
+      );
 }
-
-
-
-//This will show the following information about the song in your terminal/bash window
-
-//if no song provided, info runs for the sign by ace of base
-//spotify api call with song name
-//console.log artist(s)
-//console.log song name
-//console.log spotify preview link
-//console.log album name
 
 //node liri.js movie-this '<movie name here>'
 
-
-
-
-//This will output the following information to your terminal/bash window:
-
-//   * Title of the movie.
-//   * Year the movie came out.
-//   * IMDB Rating of the movie.
-//   * Rotten Tomatoes Rating of the movie.
-//   * Country where the movie was produced.
-//   * Language of the movie.
-//   * Plot of the movie.
-//   * Actors in the movie.
-
-
-//If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.'
-
-
-//If you haven't watched "Mr. Nobody," then you should: http://www.imdb.com/title/tt0485947/
-
-//It's on Netflix!
-
-
-//You'll use the axios package to retrieve data from the OMDB API. Like all of the in-class activities, the OMDB API requires an API key. You may use trilogy.
+function moviethis(name){
+    if(!name){
+        name ="mr+nobody";
+    }
+    var queryURL = "http://www.omdbapi.com/?apikey=trilogy&t="+name;
+    axios.get(queryURL).then(
+        function(response){
+            console.log(response.data.Title);
+            console.log(response.data.Year);
+            console.log("IMBD: "+response.data.Ratings[0].Value);
+            console.log("Rotten Tomatoes: "+response.data.Ratings[1].Value);
+            console.log(response.Country);
+            console.log(response.data.Language);
+            console.log(response.data.Plot);
+            console.log(response.data.Actors);
+        }
+    )
+}
 
 
 
