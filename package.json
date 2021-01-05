@@ -4,7 +4,7 @@
   "description": "Clearly state the problem the app is trying to solve (i.e. what is it doing and why)\r Give a high-level overview of how the app is organized\r Give start-to-finish instructions on how to run the app\r Include screenshots, gifs or videos of the app functioning\r Contain a link to a deployed version of the app\r Clearly list the technologies used in the app\r State your role in the app development",
   "main": "liri.js",
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
     "moment": "^2.24.0",
